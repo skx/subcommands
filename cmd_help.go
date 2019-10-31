@@ -22,7 +22,7 @@ type Help struct {
 // If there are no arguments we just show the available subcommands,
 // if we're given a command then we show the flags that the subcommand
 // accepts.
-func (h *Help) Execute(args []string) {
+func (h *Help) Execute(args []string) int {
 
 	//
 	// No flags?  Just dump commands.
@@ -34,7 +34,7 @@ func (h *Help) Execute(args []string) {
 
 		fmt.Printf("\nFor more details please run '%s help subcommand'.\n",
 			path.Base(os.Args[0]))
-		return
+		return 0
 	}
 
 	//
@@ -50,7 +50,7 @@ func (h *Help) Execute(args []string) {
 			//
 			// Get the name of the subcommand.
 			//
-			name := c.Name()
+			name, synopsis := c.Info()
 
 			//
 			// If the user specified this command.
@@ -75,7 +75,7 @@ func (h *Help) Execute(args []string) {
 				// If there are no flags show that.
 				//
 				if count == 0 {
-					fmt.Printf("Synopsis:\n\t%s\n", c.Synopsis())
+					fmt.Printf("Synopsis:\n\t%s\n", synopsis)
 					fmt.Printf("\n")
 					fmt.Printf("Usage:\n\t%s %s\n\n", path.Base(os.Args[0]), name)
 
@@ -84,7 +84,7 @@ func (h *Help) Execute(args []string) {
 					//
 					// Otherwise show each flag.
 					//
-					fmt.Printf("Synopsis:\n\t%s\n", c.Synopsis())
+					fmt.Printf("Synopsis:\n\t%s\n", synopsis)
 					fmt.Printf("\n")
 					fmt.Printf("Usage:\n\t%s %s [flags]\n\n", path.Base(os.Args[0]), name)
 
@@ -94,14 +94,11 @@ func (h *Help) Execute(args []string) {
 			}
 		}
 	}
+
+	return 0
 }
 
-// Name return the name of this subcommand.
-func (h *Help) Name() string {
-	return "help"
-}
-
-// Synopsis returns a one-line description of this command
-func (h *Help) Synopsis() string {
-	return "Show usage information."
+// Info returns the name of this subcommand, along with a one-line synopsis.
+func (h *Help) Info() (string, string) {
+	return "help", "Show usage information."
 }

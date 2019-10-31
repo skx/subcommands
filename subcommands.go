@@ -17,28 +17,28 @@ import (
 // In brief a sub-command has a name, a function to invoke it, and
 // the ability to define command-line flags which are specific to it.
 //
-// There is also a synopsis which can be displayed when a help
-// command is used.
 type Subcommand interface {
 
-	// Name returns the name of this subcommand.
-	Name() string
-
-	// Synopsis returns a brief line of text.
-	Synopsis() string
+	// Info is designed to returns the name, and brief
+	// description of the command.
+	Info() (string, string)
 
 	// Arguments sets up any required arguments.
 	Arguments(f *flag.FlagSet)
 
-	// The function invoked if this command is invoked.
-	Execute(args []string)
+	// The function is invoked if this subcommand is invoked.
+	//
+	// The arguments are any non-flag arguments passed to the
+	// subcommand, and the return value can be used as your
+	// exit-code.
+	Execute(args []string) int
 }
 
 // NoFlags is a helper method which allows you to define sub-commands
 // which take no flags.
 //
-// You still need to define `Name()`, `Synopsis()` and `Execute()`, but
-// this saves a little needless typing.
+// You still need to define `Info`, and `Execute()`, but this saves a
+// little needless typing.
 type NoFlags struct {
 }
 
@@ -66,28 +66,40 @@ func Register(cmd Subcommand) {
 func dump() {
 
 	// Build up the list of names here.
+	//
+	// We can sort this list later.
 	var names []string
 
-	// store the usage here
+	//
+	// Store the synopsis for the command
+	// in a map, so we can display it alongside
+	// the name.
+	//
 	info := make(map[string]string)
 
 	// Process each known sub-command
 	for _, c := range known {
-		names = append(names, c.Name())
-		info[c.Name()] = c.Synopsis()
+
+		// Get the name & synopsis
+		name, synopsis := c.Info()
+
+		// Save the name & info
+		names = append(names, name)
+		info[name] = synopsis
 	}
 
 	// Now sort the names
 	sort.Strings(names)
 
-	// Finally output them
+	// Finally output each command in sorted-order
+	// and the corresponding synopsis.
 	for _, name := range names {
 		fmt.Printf("\t%s\t%s\n", name, info[name])
 	}
 }
 
 // Execute launches the subcommand specified by the user.
-func Execute() {
+func Execute() int {
 
 	//
 	// Ensure the user specified a subcommand.
@@ -111,7 +123,7 @@ func Execute() {
 		//
 		// Get the name of the subcommand.
 		//
-		name := c.Name()
+		name, _ := c.Info()
 
 		//
 		// Create a new flagset using that name.
@@ -157,11 +169,17 @@ func Execute() {
 	for _, c := range known {
 
 		//
-		// Use the name to store the flags in a hash.
+		// Get the name of the available sub-command.
 		//
-		if os.Args[1] == c.Name() {
-			c.Execute(subCmd.Args())
-			return
+		name, _ := c.Info()
+
+		//
+		// If it is what the user wanted, then invoke it.
+		//
+		if os.Args[1] == name {
+			return (c.Execute(subCmd.Args()))
 		}
 	}
+
+	return 0
 }

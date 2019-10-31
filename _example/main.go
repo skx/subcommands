@@ -42,18 +42,14 @@ func (r *runCommand) Arguments(f *flag.FlagSet) {
 
 }
 
-// Name returns the name of this subcommand.
-func (r *runCommand) Name() string {
-	return "run"
-}
-
-// Synopsis returns a one-line description of this command
-func (r *runCommand) Synopsis() string {
-	return "Runs some magic, and dumps its arguments."
+// Info returns the name of this subcommand, along with a one-line
+// description
+func (r *runCommand) Info() (string, string) {
+	return "run", "Runs some magic, and dumps its arguments."
 }
 
 // Execute is invoked if the user specifies `run` as the subcommand.
-func (r *runCommand) Execute(args []string) {
+func (r *runCommand) Execute(args []string) int {
 
 	fmt.Printf("I am a running application!\n")
 
@@ -62,6 +58,8 @@ func (r *runCommand) Execute(args []string) {
 	for i, s := range args {
 		fmt.Printf("Argument %d is %s\n", i, s)
 	}
+
+	return 0
 }
 
 //
@@ -74,18 +72,14 @@ type versionCommand struct {
 }
 
 // Name returns the name of this subcommand.
-func (h *versionCommand) Name() string {
-	return "version"
-}
-
-// Synopsis returns a one-line description of this command
-func (h *versionCommand) Synopsis() string {
-	return "Show the application version."
+func (h *versionCommand) Info() (string, string) {
+	return "version", "Show the application version."
 }
 
 // Execute is invoked if the user specifies `version` as the subcommand.
-func (h *versionCommand) Execute(args []string) {
+func (h *versionCommand) Execute(args []string) int {
 	fmt.Printf("I am application version 1.0\n")
+	return 0
 }
 
 //
