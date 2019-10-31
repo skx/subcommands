@@ -19,12 +19,12 @@ import (
 //
 type Subcommand interface {
 
+	// Arguments sets up any required arguments.
+	Arguments(f *flag.FlagSet)
+
 	// Info is designed to returns the name, and brief
 	// description of the command.
 	Info() (string, string)
-
-	// Arguments sets up any required arguments.
-	Arguments(f *flag.FlagSet)
 
 	// The function is invoked if this subcommand is invoked.
 	//
