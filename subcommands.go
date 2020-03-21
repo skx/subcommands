@@ -198,7 +198,7 @@ func Execute() int {
 		//
 		// The user specified a subcommand which doesn't exist.
 		//
-		fmt.Printf("Invalid subcommand, available choices are:\n\n")
+		fmt.Printf("Please specify a valid subcommand, choices are:\n\n")
 		dump()
 		os.Exit(1)
 	}
