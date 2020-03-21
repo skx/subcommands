@@ -105,16 +105,15 @@ func dump() {
 	// corresponding synopsis.
 	for _, name := range names {
 
-		// pad the name with spaces
-		for len(name) < max+1 {
-			name += " "
-		}
-
 		// get the text to show; only the first line
 		text := info[name]
 		txt := strings.Split(text, "\n")
 		if len(txt) > 0 {
 			text = txt[0]
+		}
+		// pad the name with spaces
+		for len(name) < max+1 {
+			name += " "
 		}
 
 		// output it all
