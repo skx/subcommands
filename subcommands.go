@@ -11,6 +11,7 @@ import (
 	"os"
 	"path"
 	"sort"
+	"strings"
 )
 
 // Subcommand is the interface which subcommands must implement.
@@ -92,10 +93,32 @@ func dump() {
 	// Now sort the names
 	sort.Strings(names)
 
-	// Finally output each command in sorted-order
-	// and the corresponding synopsis.
+	// Get the length of the longest name
+	max := 0
 	for _, name := range names {
-		fmt.Printf("\t%s\t%s\n", name, info[name])
+		if len(name) > max {
+			max = len(name)
+		}
+	}
+
+	// Finally output each command in sorted-order with the
+	// corresponding synopsis.
+	for _, name := range names {
+
+		// pad the name with spaces
+		for len(name) < max+1 {
+			name += " "
+		}
+
+		// get the text to show; only the first line
+		text := info[name]
+		txt := strings.Split(text, "\n")
+		if len(txt) > 0 {
+			text = txt[0]
+		}
+
+		// output it all
+		fmt.Printf("\t%s%s\n", name, text)
 	}
 }
 
