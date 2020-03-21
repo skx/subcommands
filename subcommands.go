@@ -103,15 +103,6 @@ func dump() {
 func Execute() int {
 
 	//
-	// Ensure the user specified a subcommand.
-	//
-	if len(os.Args) < 2 {
-		fmt.Printf("You must specify the sub-command to execute:\n\n")
-		dump()
-		os.Exit(1)
-	}
-
-	//
 	// Keep track of flags on a per-subcommand basis.
 	//
 	subcommandFlags := make(map[string]*flag.FlagSet)
@@ -146,42 +137,41 @@ func Execute() int {
 	// The subcommand can be specified via the name of the binary
 	// or the first argument.
 	//
-	var valid []string
-	valid = append(valid, path.Base(os.Args[0]))
-	valid = append(valid, os.Args[1])
 
-	//
-	// Get the flags for the command the user chose.
-	//
+	// The flags for the command the user chose.
 	var subCmd *flag.FlagSet
 
-	//
-	// The argument offset
-	//
+	// The offset for the remaining arguments
 	var args int
 
-	//
-	// The sub-command name
-	//
+	// The actual name of the sub-command name selected
 	var subCmdName string
 
-	//
-	// Try to match either attempt.
-	//
-	for i, attempt := range valid {
+	// Did we find it
+	var found bool
 
-		var ok bool
-		subCmd, ok = subcommandFlags[attempt]
-		if ok {
-			args = i + 1
-			subCmdName = attempt
+	// Look for the first argument - if we got at least one
+	if len(os.Args) > 1 {
+		subCmd, found = subcommandFlags[os.Args[1]]
+		if found {
+			args = 2
+			subCmdName = os.Args[1]
+		}
+	}
+
+	// Failed?  Look at the binary-name
+	if subCmdName == "" {
+		subCmd, found = subcommandFlags[path.Base(os.Args[0])]
+		if found {
+			args = 1
+			subCmdName = path.Base(os.Args[0])
 		}
 	}
 
 	//
 	// If we didn't find the args then we didn't find a subcommand
 	//
-	if args == 0 {
+	if subCmdName == "" {
 		//
 		// The user specified a subcommand which doesn't exist.
 		//
