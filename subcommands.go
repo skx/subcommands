@@ -9,6 +9,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path"
 	"sort"
 )
 
@@ -142,11 +143,45 @@ func Execute() int {
 	}
 
 	//
+	// The subcommand can be specified via the name of the binary
+	// or the first argument.
+	//
+	var valid []string
+	valid = append(valid, path.Base(os.Args[0]))
+	valid = append(valid, os.Args[1])
+
+	//
 	// Get the flags for the command the user chose.
 	//
-	subCmd, ok := subcommandFlags[os.Args[1]]
-	if !ok {
+	var subCmd *flag.FlagSet
 
+	//
+	// The argument offset
+	//
+	var args int
+
+	//
+	// The sub-command name
+	//
+	var subCmdName string
+
+	//
+	// Try to match either attempt.
+	//
+	for i, attempt := range valid {
+
+		var ok bool
+		subCmd, ok = subcommandFlags[attempt]
+		if ok {
+			args = i + 1
+			subCmdName = attempt
+		}
+	}
+
+	//
+	// If we didn't find the args then we didn't find a subcommand
+	//
+	if args == 0 {
 		//
 		// The user specified a subcommand which doesn't exist.
 		//
@@ -158,7 +193,7 @@ func Execute() int {
 	//
 	// Parse the flags setup by the user.
 	//
-	if err := subCmd.Parse(os.Args[2:]); err != nil {
+	if err := subCmd.Parse(os.Args[args:]); err != nil {
 		fmt.Printf("Error parsing flags %s\n", err.Error())
 		os.Exit(1)
 	}
@@ -176,7 +211,7 @@ func Execute() int {
 		//
 		// If it is what the user wanted, then invoke it.
 		//
-		if os.Args[1] == name {
+		if subCmdName == name {
 			return (c.Execute(subCmd.Args()))
 		}
 	}
