@@ -108,9 +108,10 @@ func dump() {
 		// get the text to show; only the first line
 		text := info[name]
 		txt := strings.Split(text, "\n")
-		if len(txt) > 0 {
+		if len(txt) > 1 {
 			text = txt[0]
 		}
+
 		// pad the name with spaces
 		for len(name) < max+1 {
 			name += " "
@@ -163,17 +164,18 @@ func Execute() int {
 	// The flags for the command the user chose.
 	var subCmd *flag.FlagSet
 
-	// The offset for the remaining arguments
+	// The offset for the remaining arguments, i.e. flags/args to
+	// pass to the sub-command.
 	var args int
 
-	// The actual name of the sub-command name selected
+	// The actual name of the sub-command name selected.
 	var subCmdName string
 
 	// Did we find it
 	var found bool
 
 	// Look for the first argument - if we got at least one
-	if len(os.Args) > 1 {
+	if len(os.Args) >= 2 {
 		subCmd, found = subcommandFlags[os.Args[1]]
 		if found {
 			args = 2

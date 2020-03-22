@@ -7,7 +7,26 @@
 
 This is a simple package which allows you to write a CLI with git-like subcommands.
 
+
 ## Overview
+
+Using this library you can enable your command-line application to have a number of sub-commands, allowing things like this to be executed:
+
+    $ application one
+    $ application two [args]
+    $ application help
+
+In addition to allowing the user to specify a sub-command via the first argument it will also allow a default to be used if your binary has the same name as a sub-command.
+
+For example if you had a binary named `gobox` you could create a symlink called `ls`:
+
+    $ ln -s gobox ls
+    $ ./ls
+
+Here running `ls` is the same as running `gobox ls`, and argument parsing would work the same too:
+
+    $ gobox ls --foo
+    $ ./ls --foo
 
 
 ## Rationale
@@ -30,6 +49,7 @@ This is designed to implement the minimum required support:
 
 I think this is a clean implementation, however I appreciate we don't
 yet have any tests.
+
 
 ## Example
 
