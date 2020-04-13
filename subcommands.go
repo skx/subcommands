@@ -122,6 +122,19 @@ func dump() {
 	}
 }
 
+// Commands returns all known sub-commands
+func Commands() []string {
+
+	var ret []string
+
+	for _, cmd := range known {
+		name, _ := cmd.Info()
+		ret = append(ret, name)
+	}
+
+	return ret
+}
+
 // Execute launches the subcommand specified by the user.
 func Execute() int {
 
