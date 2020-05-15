@@ -53,9 +53,12 @@ var known []Subcommand
 
 // init registers the built-in subcommands.
 //
-// We register `help` as a command by default.
+// We register `help` as a command by default, as well as `commands`
+// and `flags` for bash-completion.
 func init() {
+
 	Register(&Help{})
+	Register(&CommandList{})
 }
 
 // Register adds a new subcommand to those which are available.

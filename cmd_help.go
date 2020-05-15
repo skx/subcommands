@@ -89,6 +89,12 @@ func (h *Help) Execute(args []string) int {
 					fmt.Printf("Usage:\n\t%s %s [flags]\n\n", path.Base(os.Args[0]), name)
 
 					fmt.Printf("\nAvailable flags:\n")
+
+					//
+					// Flags will go to STDOUT
+					//
+					set.SetOutput(os.Stdout)
+
 					set.PrintDefaults()
 				}
 			}
