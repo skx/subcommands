@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-// CommandsList is a structure which implements the built-in help subcommand
+// CommandList is a structure which implements the built-in help subcommand
 type CommandList struct {
 
 	// We embed the NoFlags option, because we accept no
@@ -32,6 +32,6 @@ func (c *CommandList) Execute(args []string) int {
 }
 
 // Info returns the name of this subcommand, along with a one-line synopsis.
-func (h *CommandList) Info() (string, string) {
+func (c *CommandList) Info() (string, string) {
 	return "commands", "Show all commands, useful for bash-completion."
 }
