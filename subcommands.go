@@ -58,7 +58,10 @@ var known []Subcommand
 func init() {
 
 	Register(&Help{})
+
+	// For completion
 	Register(&CommandList{})
+	Register(&BashCompletion{})
 }
 
 // Register adds a new subcommand to those which are available.
