@@ -70,7 +70,7 @@ _subcommands_#Command#()
         # If we see a dash complete from the available flags,
         # otherwise a file/directory.
         if [[ "$cur" =~ ^-.* ]];  then
-            local flags="$(evalfilter help ${COMP_WORDS[1]} | awk '{print $1}' | grep -- -)"
+            local flags="$(#Command# help ${COMP_WORDS[1]} | awk '{print $1}' | grep -- -)"
             COMPREPLY=($(compgen -W "${flags}" -- "$cur"))
         else
             COMPREPLY=($(compgen -f -- ${cur}))
