@@ -60,19 +60,21 @@ _subcommands_#Command#()
     # Variable to hold the current word
     cur="${COMP_WORDS[COMP_CWORD]}"
 
-    # The first argument is one of the available
-    # sub-commands.
-    #
+    # The first argument is one of the available sub-commands.
     if [ $COMP_CWORD = 1 ]; then
 
         local subs=$(#Command# commands)
         COMPREPLY=($(compgen -W "${subs}" $cur))
     else
 
-        # Otherwise complete from the flags available to the specified
-        # sub-command.
-        local flags="$(#Command# help ${COMP_WORDS[1]} | awk '{print $1}' | grep -- -)"
-        COMPREPLY=($(compgen -W "${flags}" -- "$cur"))
+        # If we see a dash complete from the available flags,
+        # otherwise a file/directory.
+        if [[ "$cur" =~ ^-.* ]];  then
+            local flags="$(evalfilter help ${COMP_WORDS[1]} | awk '{print $1}' | grep -- -)"
+            COMPREPLY=($(compgen -W "${flags}" -- "$cur"))
+        else
+            COMPREPLY=($(compgen -f -- ${cur}))
+        fi
    fi
 }
 
