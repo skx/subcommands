@@ -55,6 +55,7 @@ func (bc *BashCompletion) Execute(args []string) int {
 _subcommands_#Command#()
 {
     local cur
+    local prev=$3
     COMPREPLY=()
 
     # Variable to hold the current word
@@ -69,11 +70,16 @@ _subcommands_#Command#()
 
         # If we see a dash complete from the available flags,
         # otherwise a file/directory.
-        if [[ "$cur" =~ ^-.* ]];  then
+        if [[ "$cur" =~ ^-.* ]]; then
             local flags="$(#Command# help ${COMP_WORDS[1]} | awk '{print $1}' | grep -- -)"
             COMPREPLY=($(compgen -W "${flags}" -- "$cur"))
         else
-            COMPREPLY=($(compgen -f -- ${cur}))
+            if [[ "$prev" == "help" ]]; then
+                local subs=$(#Command# commands)
+                COMPREPLY=($(compgen -W "${subs}" $cur))
+            else
+                COMPREPLY=($(compgen -f -- ${cur}))
+            fi
         fi
    fi
 }
